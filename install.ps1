@@ -173,7 +173,7 @@ if (Test-Path $settingsFile) {
     Write-Host "  settings.json not found, skipping" -ForegroundColor Yellow
 }
 
-$bitrix24Dir = "C:\bitrix24"
+$bitrix24Dir = "$env:USERPROFILE\.claude"
 if (-not (Test-Path $bitrix24Dir)) { New-Item -ItemType Directory -Force $bitrix24Dir | Out-Null }
 @'
 # Bitrix24 — kontekst iTech
@@ -299,7 +299,7 @@ MCP servers: bitrix24 (employee), bitrix24-admin (extended access)
 | C15:WON | Deal won |
 | C15:LOSE | Deal lost |
 '@ | Set-Content "$bitrix24Dir\CLAUDE.md" -Encoding UTF8
-Write-OK "C:\bitrix24\CLAUDE.md created"
+Write-OK "~\.claude\CLAUDE.md created (global org context)"
 
 Write-Host "`n=== Done! ===" -ForegroundColor Cyan
 Write-Host "  Run claude from C:\bitrix24 to load org context automatically." -ForegroundColor Cyan

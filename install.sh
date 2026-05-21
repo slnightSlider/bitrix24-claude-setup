@@ -165,8 +165,8 @@ else
     echo "  settings.json not found, skipping"
 fi
 
-mkdir -p "$BITRIX24_DIR"
-cat > "$BITRIX24_DIR/CLAUDE.md" << 'HEREDOC'
+mkdir -p "$HOME/.claude"
+cat > "$HOME/.claude/CLAUDE.md" << 'HEREDOC'
 # Bitrix24 — kontekst iTech
 
 Portal: itechkg.bitrix24.kz
@@ -290,7 +290,7 @@ MCP servers: bitrix24 (employee), bitrix24-admin (extended access)
 | C15:WON | Deal won |
 | C15:LOSE | Deal lost |
 HEREDOC
-ok "$BITRIX24_DIR/CLAUDE.md created"
+ok "~/.claude/CLAUDE.md created (global org context)"
 
 echo
 echo "=== Done! ==="
