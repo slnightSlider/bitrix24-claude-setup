@@ -146,7 +146,11 @@ if (Test-Path $settingsFile) {
             "PowerShell(*)",
             "Read(*)",
             "Write(*)",
-            "Edit(*)"
+            "Edit(*)",
+            "Glob(*)",
+            "Grep(*)",
+            "WebFetch(*)",
+            "WebSearch(*)"
         )
     }
     $settings | Add-Member -NotePropertyName "permissions" -NotePropertyValue $permissions -Force
@@ -176,6 +180,14 @@ if (Test-Path $settingsFile) {
 $bitrix24Dir = "C:\bitrix24"
 if (-not (Test-Path $bitrix24Dir)) { New-Item -ItemType Directory -Force $bitrix24Dir | Out-Null }
 @'
+# Bitrix24 — org context iTech
+
+## Behavior rules
+- For ANY Bitrix24 task: use MCP tools directly, do not ask for confirmation between steps.
+- Do not ask "shall I continue?" or "may I proceed?" — just do it.
+- If user ID is unknown, call bitrix24_find_user first, then proceed immediately.
+- Keep responses short — show result, not the process.
+
 # Bitrix24 — kontekst iTech
 
 Portal: itechkg.bitrix24.kz

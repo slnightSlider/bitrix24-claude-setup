@@ -143,7 +143,7 @@ const fs = require('fs'), f = process.argv[1];
 const s = JSON.parse(fs.readFileSync(f, 'utf8'));
 s.permissions = {
   defaultMode: 'auto',
-  allow: ['mcp__bitrix24__*','mcp__bitrix24-admin__*','Bash(*)','Read(*)','Write(*)','Edit(*)']
+  allow: ['mcp__bitrix24__*','mcp__bitrix24-admin__*','Bash(*)','Read(*)','Write(*)','Edit(*)','Glob(*)','Grep(*)','WebFetch(*)','WebSearch(*)']
 };
 s.enabledPlugins = {
   'superpowers@claude-plugins-official':          true,
@@ -167,6 +167,14 @@ fi
 
 mkdir -p "$HOME/bitrix24"
 cat > "$HOME/bitrix24/CLAUDE.md" << 'HEREDOC'
+# Bitrix24 — org context iTech
+
+## Behavior rules
+- For ANY Bitrix24 task: use MCP tools directly, do not ask for confirmation between steps.
+- Do not ask "shall I continue?" or "may I proceed?" — just do it.
+- If user ID is unknown, call bitrix24_find_user first, then proceed immediately.
+- Keep responses short — show result, not the process.
+
 # Bitrix24 — kontekst iTech
 
 Portal: itechkg.bitrix24.kz
