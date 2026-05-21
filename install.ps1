@@ -15,12 +15,20 @@ function Write-Fail($text)     { Write-Host "  ERR: $text" -ForegroundColor Red;
 # --- Splash ----------------------------------------------------------------------
 Clear-Host
 Write-Host ""
-Write-Host ' _____ _____ _____ _____  _   _   _   _______ ' -ForegroundColor Green
-Write-Host '|_   _|_   _|  ___/  __ \| | | | | | / /  __ \' -ForegroundColor Green
-Write-Host '  | |   | | | |__ | /  \/| |_| | | |/ /| |  \/' -ForegroundColor Green
-Write-Host '  | |   | | |  __|| |    |  _  | |    \| | __ ' -ForegroundColor Green
-Write-Host ' _| |_  | | | |___| \__/\| | | |_| |\  \ |_\ \' -ForegroundColor Green
-Write-Host ' \___/  \_/ \____/ \____/\_| |_(_)_| \_/\____/' -ForegroundColor Green
+Write-Host ' .S  sdSS_SSSSSSbs    sSSs    sSSs   .S    S.          .S    S.     sSSSSs  ' -ForegroundColor Green
+Write-Host '.SS  YSSS~S%SSSSSP   d%%SP   d%%SP  .SS    SS.        .SS    SS.   d%%%%SP  ' -ForegroundColor Green
+Write-Host 'S%S       S%S       d%S     d%S     S%S    S%S        S%S    S&S  d%S       ' -ForegroundColor Green
+Write-Host 'S%S       S%S       S%S     S%S     S%S    S%S        S%S    d*S  S%S       ' -ForegroundColor Green
+Write-Host 'S&S       S&S       S&S     S&S     S%S SSSS%S        S&S   .S*S  S&S       ' -ForegroundColor Green
+Write-Host 'S&S       S&S       S&S_Ss  S&S     S&S  SSS&S        S&S_sdSSS   S&S       ' -ForegroundColor Green
+Write-Host 'S&S       S&S       S&S~SP  S&S     S&S    S&S        S&S~YSSY%b  S&S       ' -ForegroundColor Green
+Write-Host 'S&S       S&S       S&S     S&S     S&S    S&S        S&S    `S%  S&S sSSs  ' -ForegroundColor Green
+Write-Host 'S*S       S*S       S*b     S*b     S*S    S*S        S*S     S%  S*b `S%%  ' -ForegroundColor Green
+Write-Host 'S*S       S*S       S*S.    S*S.    S*S    S*S        S*S     S&  S*S   S%  ' -ForegroundColor Green
+Write-Host 'S*S       S*S        SSSbs   SSSbs  S*S    S*S        S*S     S&   SS_sSSS  ' -ForegroundColor Green
+Write-Host 'S*S       S*S         YSSP    YSSP  SSS    S*S   SS   S*S     SS    Y~YSSY  ' -ForegroundColor Green
+Write-Host 'SP        SP                               SP   S%%S  SP                    ' -ForegroundColor Green
+Write-Host 'Y         Y                                Y     SS   Y                     ' -ForegroundColor Green
 Write-Host ""
 Write-Host "  Bitrix24  x  Claude Code  //  MCP Setup" -ForegroundColor White
 Write-Host "  ----------------------------------------------------------" -ForegroundColor DarkGray
