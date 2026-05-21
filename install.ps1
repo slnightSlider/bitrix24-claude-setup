@@ -102,7 +102,7 @@ if ($adminConfig) {
         type    = "stdio"
         command = "node"
         args    = @("$INSTALL_DIR\build\index.js")
-        env     = [PSCustomObject]@{ BITRIX24_WEBHOOK_URL = $adminConfig.webhookUrl }
+        env     = [PSCustomObject]@{ BITRIX24_WEBHOOK_URL = $adminConfig.adminWebhookUrl }
     })
 }
 
