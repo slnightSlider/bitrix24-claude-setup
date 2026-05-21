@@ -8,7 +8,7 @@ $REPO_ZIP = "https://github.com/slnightSlider/bitrix24-claude-setup/archive/refs
 $INSTALL_DIR = "C:\bitrix24-mcp-server"
 $CONFIG_URL = "https://config.rsqt.com.kg"
 
-function Write-Step($n, $text) { Write-Host "`n[$n/5] $text" -ForegroundColor Yellow }
+function Write-Step($n, $text) { Write-Host "`n[$n/6] $text" -ForegroundColor Yellow }
 function Write-OK($text)       { Write-Host "  OK: $text" -ForegroundColor Green }
 function Write-Fail($text)     { Write-Host "  ERR: $text" -ForegroundColor Red; exit 1 }
 
@@ -112,7 +112,161 @@ if ($adminConfig) {
 $claude.mcpServers = $mcp
 $claude | ConvertTo-Json -Depth 10 | Set-Content $claudeFile -Encoding UTF8
 
+# --- 6. Configure permissions and org context ------------------------------------
+Write-Step 6 "Configuring permissions and org context"
+
+$settingsFile = "$env:USERPROFILE\.claude\settings.json"
+if (Test-Path $settingsFile) {
+    $settings = Get-Content $settingsFile -Raw | ConvertFrom-Json
+    $permissions = [PSCustomObject]@{
+        defaultMode = "auto"
+        allow       = @(
+            "mcp__bitrix24__*",
+            "mcp__bitrix24-admin__*",
+            "Bash(*)",
+            "PowerShell(*)",
+            "Read(*)",
+            "Write(*)",
+            "Edit(*)"
+        )
+    }
+    $settings | Add-Member -NotePropertyName "permissions" -NotePropertyValue $permissions -Force
+    $settings | ConvertTo-Json -Depth 10 | Set-Content $settingsFile -Encoding UTF8
+    Write-OK "Auto-approve mode enabled"
+} else {
+    Write-Host "  settings.json not found, skipping" -ForegroundColor Yellow
+}
+
+$bitrix24Dir = "C:\bitrix24"
+if (-not (Test-Path $bitrix24Dir)) { New-Item -ItemType Directory -Force $bitrix24Dir | Out-Null }
+@'
+# Bitrix24 — kontekst iTech
+
+Portal: itechkg.bitrix24.kz
+MCP servers: bitrix24 (employee), bitrix24-admin (extended access)
+
+## Users
+
+| ID | Name | Role |
+|----|------|------|
+| 1 | Chyngyz Usenov | — |
+| 15 | Albina Aidakeeva | — |
+| 17 | Japar Usenov | — |
+| 27 | Beksultan Rakhmanov | Project Manager |
+| 29 | Dastan Almazbekov | Project Manager |
+| 35 | Nurdoolot Ermekbaev | Sales Manager |
+| 45 | Nursultan Usupbaev | Logistics / Warehouse |
+| 265 | Elmarbek Sadibakasov | Sales Manager |
+| 273 | Ruslan Ibraimov | — |
+| 281 | Viktor Artamonov | — |
+| 659 | Bayel Mars uulu | Design / DevOps / IT |
+| 661 | Renat Isaev | — |
+| 663 | Evgeniya Sagaydak | — |
+| 665 | Kubanychbek Abdulkhakim uulu | — |
+| 667 | Guliza Teshebaeva | Office Manager |
+| 669 | Azamat Imanturov | — |
+
+## Task statuses
+
+| Code | Meaning |
+|------|---------|
+| 1 | New |
+| 2 | Pending |
+| 3 | In progress |
+| 5 | Completed |
+| 6 | Deferred |
+| 7 | Declined |
+
+## CRM Pipelines and stages
+
+### General (category_id=0)
+| STAGE_ID | Name |
+|----------|------|
+| NEW | New request |
+| UC_H9Y3H3 | New request Whatsapp |
+| PREPARATION | Proposal preparation |
+| PREPAYMENT_INVOICE | Proposal sent (awaiting confirmation) |
+| EXECUTING | Contract / invoice |
+| UC_9K5NM2 | Payment confirmed |
+| UC_FJJ0GB | Tender |
+| UC_CZIW12 | Next period |
+| WON | Deal won |
+| LOSE | Deal lost |
+| APOLOGY | Loss analysis |
+
+### Tender (category_id=1)
+| STAGE_ID | Name |
+|----------|------|
+| C1:NEW | Tender selection |
+| C1:PREPARATION | Tech solution approval |
+| C1:PREPAYMENT_INVOICE | Price table preparation |
+| C1:EXECUTING | Document submission |
+| C1:FINAL_INVOICE | Contract |
+| C1:WON | Deal won |
+| C1:LOSE | Deal lost |
+
+### Supply and Installation (category_id=3)
+| STAGE_ID | Name |
+|----------|------|
+| C3:NEW | Equipment purchase |
+| C3:PREPAYMENT_INVOICE | Installation estimate |
+| C3:EXECUTING | Installation |
+| C3:PREPARATION | ESF |
+| C3:FINAL_INVOICE | Completion act |
+| C3:WON | Deal won |
+| C3:LOSE | Deal lost |
+
+### CAC Projects (category_id=5)
+| STAGE_ID | Name |
+|----------|------|
+| C5:NEW | New lead |
+| C5:PREPARATION | Receiving TOR |
+| C5:EXECUTING | Partner proposal |
+| C5:FINAL_INVOICE | Client proposal |
+| C5:UC_2Y6NRM | Proposal delivered |
+| C5:PREPAYMENT_INVOICE | Vendor price negotiation |
+| C5:UC_PCWEKU | Contract negotiation |
+| C5:UC_VQ4PIY | Invoice / payment / SO launch |
+| C5:WON | Deal won |
+| C5:LOSE | Deal lost |
+
+### CAC Design (category_id=9)
+| STAGE_ID | Name |
+|----------|------|
+| C9:NEW | Awaiting acceptance |
+| C9:PREPARATION | Passed to designer |
+| C9:EXECUTING | Passed for proposal |
+| C9:WON | Deal won |
+| C9:LOSE | Deal lost |
+
+### AV Service (category_id=13)
+| STAGE_ID | Name |
+|----------|------|
+| C13:NEW | Service request |
+| C13:PREPARATION | Remote / on-site diagnostics |
+| C13:PREPAYMENT_INVOIC | Parts / firmware selection |
+| C13:EXECUTING | Installation / setup |
+| C13:UC_8PK6L3 | Handover / payment |
+| C13:UC_2XY1DV | Post-service support |
+| C13:WON | Deal won |
+| C13:LOSE | Deal lost |
+
+### AC Service (category_id=15)
+| STAGE_ID | Name |
+|----------|------|
+| C15:NEW | New request |
+| C15:PREPARATION | Diagnostics / measurement |
+| C15:PREPAYMENT_INVOIC | Estimate and proposal |
+| C15:EXECUTING | Awaiting parts / warehouse |
+| C15:FINAL_INVOICE | Service work (installation) |
+| C15:UC_L8KUBG | Quality control / payment |
+| C15:WON | Deal won |
+| C15:LOSE | Deal lost |
+'@ | Set-Content "$bitrix24Dir\CLAUDE.md" -Encoding UTF8
+Write-OK "C:\bitrix24\CLAUDE.md created"
+
 Write-Host "`n=== Done! ===" -ForegroundColor Cyan
+Write-Host "  Run claude from C:\bitrix24 to load org context automatically." -ForegroundColor Cyan
 Write-Host "Run: " -NoNewline; Write-Host "claude mcp list" -ForegroundColor White
 if ($adminConfig) {
     Write-Host "Available: bitrix24, bitrix24-admin" -ForegroundColor Green
