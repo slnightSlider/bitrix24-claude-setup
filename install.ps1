@@ -16,15 +16,20 @@ Write-Host "`n=== Bitrix24 MCP setup for Claude Code ===" -ForegroundColor Cyan
 
 # --- 1. Node.js ------------------------------------------------------------------
 Write-Step 1 "Checking Node.js"
-try {
-    $raw = node --version 2>&1
-    $ver = $raw.ToString().TrimStart('v')
-    $major = [int]($ver.Split('.')[0])
-    if ($major -lt 18) { Write-Fail "Node.js $ver is too old, need 18+. Download: https://nodejs.org" }
-    Write-OK "Node.js v$ver"
-} catch {
-    Write-Fail "Node.js not found. Install: https://nodejs.org"
+$nodeCmd = Get-Command node -ErrorAction SilentlyContinue
+if (-not $nodeCmd) {
+    Write-Host "  Installing Node.js LTS..." -ForegroundColor Yellow
+    winget install --id OpenJS.NodeJS.LTS --silent --accept-package-agreements --accept-source-agreements | Out-Null
+    $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" +
+                [System.Environment]::GetEnvironmentVariable("PATH","User")
+    $nodeCmd = Get-Command node -ErrorAction SilentlyContinue
+    if (-not $nodeCmd) { Write-Fail "Node.js install failed. Manual install: https://nodejs.org" }
 }
+$raw = node --version 2>&1
+$ver = $raw.ToString().TrimStart('v')
+$major = [int]($ver.Split('.')[0])
+if ($major -lt 18) { Write-Fail "Node.js $ver is too old, need 18+. Download: https://nodejs.org" }
+Write-OK "Node.js v$ver"
 
 # --- 2. cloudflared --------------------------------------------------------------
 Write-Step 2 "Checking cloudflared"

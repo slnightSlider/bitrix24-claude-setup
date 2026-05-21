@@ -18,7 +18,18 @@ echo "=== Bitrix24 MCP setup for Claude Code ==="
 
 # --- 1. Node.js ------------------------------------------------------------------
 step 1 "Checking Node.js"
-node_ver=$(node --version 2>/dev/null | tr -d 'v') || fail "Node.js not found. Install: https://nodejs.org"
+if ! command -v node &>/dev/null; then
+    echo "  Installing Node.js..."
+    if ! command -v brew &>/dev/null; then
+        echo "  Installing Homebrew first..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        [ -f "/opt/homebrew/bin/brew" ] && eval "$(/opt/homebrew/bin/brew shellenv)"
+        [ -f "/usr/local/bin/brew" ]    && eval "$(/usr/local/bin/brew shellenv)"
+    fi
+    brew install node --quiet
+    command -v node &>/dev/null || fail "Node.js install failed. Manual install: https://nodejs.org"
+fi
+node_ver=$(node --version | tr -d 'v')
 major=$(echo "$node_ver" | cut -d. -f1)
 [ "$major" -ge 18 ] || fail "Node.js $node_ver is too old, need 18+. Install: https://nodejs.org"
 ok "Node.js v$node_ver"
