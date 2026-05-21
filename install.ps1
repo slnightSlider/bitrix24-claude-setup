@@ -13,6 +13,8 @@ function Write-OK($text)       { Write-Host "  OK: $text" -ForegroundColor Green
 function Write-Fail($text)     { Write-Host "  ERR: $text" -ForegroundColor Red; exit 1 }
 
 # --- Splash ----------------------------------------------------------------------
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 Clear-Host
 Write-Host ""
 Write-Host '  ██╗████████╗███████╗ ██████╗██╗  ██╗   ██╗  ██╗ ██████╗ ' -ForegroundColor Green
