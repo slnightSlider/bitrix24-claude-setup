@@ -8,25 +8,25 @@ $REPO_ZIP = "https://github.com/slnightSlider/bitrix24-claude-setup/archive/refs
 $INSTALL_DIR = "C:\bitrix24-mcp-server"
 $CONFIG_URL = "https://config.rsqt.com.kg"
 
-function Write-Step($n, $text) { Write-Host "`n[$n/5] $text" -ForegroundColor Yellow }
+function Write-Step($n, $text) { Write-Host "`n[$n/5] $text" -ForegroundColor Cyan }
 function Write-OK($text)       { Write-Host "  OK: $text" -ForegroundColor Green }
 function Write-Fail($text)     { Write-Host "  ERR: $text" -ForegroundColor Red; exit 1 }
 
 # --- Splash ----------------------------------------------------------------------
 Clear-Host
 Write-Host ""
-Write-Host ' ______  ________  ________   ______   __    __      __    __   ______  ' -ForegroundColor Cyan
-Write-Host '/      |/        |/        | /      \ /  |  /  |    /  |  /  | /      \ ' -ForegroundColor Cyan
-Write-Host '$$$$$$/ $$$$$$$$/ $$$$$$$$/ /$$$$$$  |$$ |  $$ |    $$ | /$$/ /$$$$$$  |' -ForegroundColor Cyan
-Write-Host '  $$ |     $$ |   $$ |__    $$ |  $$/ $$ |__$$ |    $$ |/$$/  $$ | _$$/ ' -ForegroundColor Cyan
-Write-Host '  $$ |     $$ |   $$    |   $$ |      $$    $$ |    $$  $$<   $$ |/    |' -ForegroundColor Cyan
-Write-Host '  $$ |     $$ |   $$$$$/    $$ |   __ $$$$$$$$ |    $$$$$  \  $$ |$$$$ |' -ForegroundColor Cyan
-Write-Host ' _$$ |_    $$ |   $$ |_____ $$ \__/  |$$ |  $$ | __ $$ |$$  \ $$ \__$$ |' -ForegroundColor Cyan
-Write-Host '/ $$   |   $$ |   $$       |$$    $$/ $$ |  $$ |/  |$$ | $$  |$$    $$/ ' -ForegroundColor Cyan
-Write-Host '$$$$$$/    $$/    $$$$$$$$/  $$$$$$/  $$/   $$/ $$/ $$/   $$/  $$$$$$/  ' -ForegroundColor Cyan
+Write-Host '__/\\\\\\\\\\\__/\\\\\\\\\\\\\\\__/\\\\\\\\\\\\\\\________/\\\\\\\\\__/\\\________/\\\________/\\\________/\\\_____/\\\\\\\\\\\\_ ' -ForegroundColor Green
+Write-Host ' _\/////\\\///__\///////\\\/////__\/\\\///////////______/\\\////////__\/\\\_______\/\\\_______\/\\\_____/\\\//____/\\\//////////__ ' -ForegroundColor Green
+Write-Host '  _____\/\\\___________\/\\\_______\/\\\_______________/\\\/___________\/\\\_______\/\\\_______\/\\\__/\\\//______/\\\_____________ ' -ForegroundColor Green
+Write-Host '   _____\/\\\___________\/\\\_______\/\\\\\\\\\\\______/\\\_____________\/\\\\\\\\\\\\\\\_______\/\\\\\\//\\\_____\/\\\____/\\\\\\\_ ' -ForegroundColor Green
+Write-Host '    _____\/\\\___________\/\\\_______\/\\\///////______\/\\\_____________\/\\\/////////\\\_______\/\\\//_\//\\\____\/\\\___\/////\\\_ ' -ForegroundColor Green
+Write-Host '     _____\/\\\___________\/\\\_______\/\\\_____________\//\\\____________\/\\\_______\/\\\_______\/\\\____\//\\\___\/\\\_______\/\\\_ ' -ForegroundColor Green
+Write-Host '      _____\/\\\___________\/\\\_______\/\\\______________\///\\\__________\/\\\_______\/\\\_______\/\\\_____\//\\\__\/\\\_______\/\\\_ ' -ForegroundColor Green
+Write-Host '       __/\\\\\\\\\\\_______\/\\\_______\/\\\\\\\\\\\\\\\____\////\\\\\\\\\_\/\\\_______\/\\\__/\\\_\/\\\______\//\\\_\//\\\\\\\\\\\\__ ' -ForegroundColor Green
+Write-Host '        _\///////////________\///________\///////////////________\/////////__\///________\///__\///__\///________\///___\////////////___ ' -ForegroundColor Green
 Write-Host ""
 Write-Host "  Bitrix24  x  Claude Code  //  MCP Setup" -ForegroundColor White
-Write-Host "  ─────────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
+Write-Host "  ──────────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
 Write-Host ""
 
 $init = @(
