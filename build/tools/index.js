@@ -859,6 +859,70 @@ export const getCompaniesWithUserNamesTool = {
         }
     }
 };
+// Task Management Tools
+export const createTaskTool = {
+    name: 'bitrix24_create_task',
+    description: 'Create a new task in Bitrix24 and assign it to a user',
+    inputSchema: {
+        type: 'object',
+        properties: {
+            title: { type: 'string', description: 'Task title' },
+            responsibleId: { type: 'string', description: 'User ID of the responsible person' },
+            description: { type: 'string', description: 'Task description' },
+            deadline: { type: 'string', description: 'Deadline in ISO 8601 format, e.g. 2026-05-25T23:59:00+06:00' }
+        },
+        required: ['title', 'responsibleId']
+    }
+};
+export const getTaskTool = {
+    name: 'bitrix24_get_task',
+    description: 'Get a task by its ID',
+    inputSchema: {
+        type: 'object',
+        properties: {
+            id: { type: 'string', description: 'Task ID' }
+        },
+        required: ['id']
+    }
+};
+export const listTasksTool = {
+    name: 'bitrix24_list_tasks',
+    description: 'List tasks with optional filters. Status values: 1=New, 2=Pending, 3=In Progress, 5=Completed, 6=Deferred.',
+    inputSchema: {
+        type: 'object',
+        properties: {
+            responsibleId: { type: 'string', description: 'Filter by responsible user ID' },
+            status: { type: 'number', description: 'Filter by status (1=New, 2=Pending, 3=In Progress, 5=Completed)' },
+            limit: { type: 'number', description: 'Max tasks to return', default: 20 }
+        }
+    }
+};
+export const updateTaskTool = {
+    name: 'bitrix24_update_task',
+    description: 'Update a task (change status, deadline, title, etc.)',
+    inputSchema: {
+        type: 'object',
+        properties: {
+            id: { type: 'string', description: 'Task ID' },
+            title: { type: 'string', description: 'New title' },
+            status: { type: 'number', description: 'New status (1=New, 2=Pending, 3=In Progress, 5=Completed, 6=Deferred)' },
+            deadline: { type: 'string', description: 'New deadline in ISO 8601 format' },
+            description: { type: 'string', description: 'New description' }
+        },
+        required: ['id']
+    }
+};
+export const findUserTool = {
+    name: 'bitrix24_find_user',
+    description: 'Find Bitrix24 users by name to get their ID for task assignment',
+    inputSchema: {
+        type: 'object',
+        properties: {
+            name: { type: 'string', description: 'Name or last name to search for' }
+        },
+        required: ['name']
+    }
+};
 // Export all tools
 export const allTools = [
     createContactTool,
@@ -913,7 +977,13 @@ export const allTools = [
     getContactsWithUserNamesTool,
     getDealsWithUserNamesTool,
     getLeadsWithUserNamesTool,
-    getCompaniesWithUserNamesTool
+    getCompaniesWithUserNamesTool,
+    // Task Management Tools
+    createTaskTool,
+    getTaskTool,
+    listTasksTool,
+    updateTaskTool,
+    findUserTool
 ];
 // Tool execution handlers
 export async function executeToolCall(name, args) {
@@ -1362,6 +1432,37 @@ export async function executeToolCall(name, args) {
                 });
                 const companiesWithNames = await bitrix24Client.enhanceWithUserNames(companiesRaw.slice(0, args.limit || 20));
                 return { success: true, companies: companiesWithNames, message: `Retrieved ${companiesWithNames.length} companies with user names resolved` };
+            case 'bitrix24_create_task': {
+                const taskFields = { TITLE: args.title, RESPONSIBLE_ID: args.responsibleId };
+                if (args.description) taskFields.DESCRIPTION = args.description;
+                if (args.deadline) taskFields.DEADLINE = args.deadline;
+                const task = await bitrix24Client.createTask(taskFields);
+                return { success: true, taskId: task.id, task, message: `Task created with ID: ${task.id}` };
+            }
+            case 'bitrix24_get_task': {
+                const task = await bitrix24Client.getTask(args.id);
+                return { success: true, task };
+            }
+            case 'bitrix24_list_tasks': {
+                const filter = {};
+                if (args.responsibleId) filter.RESPONSIBLE_ID = args.responsibleId;
+                if (args.status !== undefined) filter.STATUS = args.status;
+                const tasks = await bitrix24Client.listTasks(filter, {}, args.limit || 20);
+                return { success: true, tasks, count: tasks.length };
+            }
+            case 'bitrix24_update_task': {
+                const fields = {};
+                if (args.title) fields.TITLE = args.title;
+                if (args.status !== undefined) fields.STATUS = args.status;
+                if (args.deadline) fields.DEADLINE = args.deadline;
+                if (args.description) fields.DESCRIPTION = args.description;
+                const result = await bitrix24Client.updateTask(args.id, fields);
+                return { success: true, result, message: `Task ${args.id} updated` };
+            }
+            case 'bitrix24_find_user': {
+                const users = await bitrix24Client.findUsers(args.name);
+                return { success: true, users: users.map(u => ({ id: u.ID, name: `${u.NAME} ${u.LAST_NAME}`.trim(), email: u.EMAIL, position: u.WORK_POSITION })) };
+            }
             default:
                 throw new Error(`Unknown tool: ${name}`);
         }

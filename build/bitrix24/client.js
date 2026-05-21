@@ -1093,6 +1093,36 @@ export class Bitrix24Client {
         // Implementation for performance forecasting
         return { message: 'Performance forecasting - implementation in progress' };
     }
+    // Task Management Methods
+    async createTask(fields) {
+        const result = await this.makeRequest('tasks.task.add', { fields });
+        return result.task;
+    }
+    async getTask(id) {
+        const result = await this.makeRequest('tasks.task.get', { taskId: id });
+        return result.task;
+    }
+    async listTasks(filter = {}, order = {}, limit = 20) {
+        const result = await this.makeRequest('tasks.task.list', {
+            filter,
+            order: Object.keys(order).length ? order : { ID: 'DESC' },
+            select: ['ID', 'TITLE', 'DESCRIPTION', 'STATUS', 'DEADLINE', 'CREATED_DATE', 'RESPONSIBLE_ID', 'CREATED_BY'],
+            start: 0
+        });
+        const tasks = Array.isArray(result) ? result : (result.tasks || []);
+        return tasks.slice(0, limit);
+    }
+    async updateTask(id, fields) {
+        const result = await this.makeRequest('tasks.task.update', { taskId: id, fields });
+        return result;
+    }
+    async findUsers(name) {
+        const result = await this.makeRequest('user.search', { NAME: name });
+        const byFirst = Array.isArray(result) ? result : [];
+        if (byFirst.length) return byFirst;
+        const result2 = await this.makeRequest('user.search', { LAST_NAME: name });
+        return Array.isArray(result2) ? result2 : [];
+    }
 }
 export const bitrix24Client = new Bitrix24Client();
 //# sourceMappingURL=client.js.map
