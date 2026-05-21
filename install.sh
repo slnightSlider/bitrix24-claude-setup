@@ -16,16 +16,21 @@ fail() { printf "  ERR: %s\n" "$1"; exit 1; }
 
 echo "=== Bitrix24 MCP setup for Claude Code ==="
 
-# --- 1. Node.js ------------------------------------------------------------------
-step 1 "Checking Node.js"
-if ! command -v node &>/dev/null; then
-    echo "  Installing Node.js..."
+# --- 1. Dependencies -------------------------------------------------------------
+step 1 "Checking dependencies"
+
+ensure_brew() {
     if ! command -v brew &>/dev/null; then
-        echo "  Installing Homebrew first..."
+        echo "  Installing Homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         [ -f "/opt/homebrew/bin/brew" ] && eval "$(/opt/homebrew/bin/brew shellenv)"
         [ -f "/usr/local/bin/brew" ]    && eval "$(/usr/local/bin/brew shellenv)"
     fi
+}
+
+if ! command -v node &>/dev/null; then
+    echo "  Installing Node.js..."
+    ensure_brew
     brew install node --quiet
     command -v node &>/dev/null || fail "Node.js install failed. Manual install: https://nodejs.org"
 fi
@@ -33,6 +38,14 @@ node_ver=$(node --version | tr -d 'v')
 major=$(echo "$node_ver" | cut -d. -f1)
 [ "$major" -ge 18 ] || fail "Node.js $node_ver is too old, need 18+. Install: https://nodejs.org"
 ok "Node.js v$node_ver"
+
+if ! command -v git &>/dev/null; then
+    echo "  Installing Git..."
+    ensure_brew
+    brew install git --quiet
+    command -v git &>/dev/null || fail "Git install failed. Manual install: https://git-scm.com"
+fi
+ok "Git $(git --version | sed 's/git version //')"
 
 # --- 2. cloudflared --------------------------------------------------------------
 step 2 "Checking cloudflared"

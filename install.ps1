@@ -14,8 +14,9 @@ function Write-Fail($text)     { Write-Host "  ERR: $text" -ForegroundColor Red;
 
 Write-Host "`n=== Bitrix24 MCP setup for Claude Code ===" -ForegroundColor Cyan
 
-# --- 1. Node.js ------------------------------------------------------------------
-Write-Step 1 "Checking Node.js"
+# --- 1. Dependencies -------------------------------------------------------------
+Write-Step 1 "Checking dependencies"
+
 $nodeCmd = Get-Command node -ErrorAction SilentlyContinue
 if (-not $nodeCmd) {
     Write-Host "  Installing Node.js LTS..." -ForegroundColor Yellow
@@ -30,6 +31,18 @@ $ver = $raw.ToString().TrimStart('v')
 $major = [int]($ver.Split('.')[0])
 if ($major -lt 18) { Write-Fail "Node.js $ver is too old, need 18+. Download: https://nodejs.org" }
 Write-OK "Node.js v$ver"
+
+$gitCmd = Get-Command git -ErrorAction SilentlyContinue
+if (-not $gitCmd) {
+    Write-Host "  Installing Git..." -ForegroundColor Yellow
+    winget install --id Git.Git --silent --accept-package-agreements --accept-source-agreements | Out-Null
+    $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" +
+                [System.Environment]::GetEnvironmentVariable("PATH","User")
+    $gitCmd = Get-Command git -ErrorAction SilentlyContinue
+    if (-not $gitCmd) { Write-Fail "Git install failed. Manual install: https://git-scm.com" }
+}
+$gitVer = (git --version 2>&1).ToString().Replace("git version ","")
+Write-OK "Git $gitVer"
 
 # --- 2. cloudflared --------------------------------------------------------------
 Write-Step 2 "Checking cloudflared"
