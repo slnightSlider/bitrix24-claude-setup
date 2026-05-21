@@ -8,14 +8,52 @@ $REPO_ZIP = "https://github.com/slnightSlider/bitrix24-claude-setup/archive/refs
 $INSTALL_DIR = "C:\bitrix24-mcp-server"
 $CONFIG_URL = "https://config.rsqt.com.kg"
 
-function Write-Step($n, $text) { Write-Host "`n[$n/6] $text" -ForegroundColor Yellow }
+function Write-Step($n, $text) { Write-Host "`n[$n/5] $text" -ForegroundColor Yellow }
 function Write-OK($text)       { Write-Host "  OK: $text" -ForegroundColor Green }
 function Write-Fail($text)     { Write-Host "  ERR: $text" -ForegroundColor Red; exit 1 }
 
 Write-Host "`n=== Bitrix24 MCP setup for Claude Code ===" -ForegroundColor Cyan
 
-# --- 1. Dependencies -------------------------------------------------------------
-Write-Step 1 "Checking dependencies"
+# --- 1. Auth ---------------------------------------------------------------------
+Write-Step 1 "Login (browser will open)"
+Write-Host "  Sign in with your work email to get access." -ForegroundColor Cyan
+
+$cfCmd = Get-Command cloudflared -ErrorAction SilentlyContinue
+$cfPath = if ($cfCmd) { $cfCmd.Source } else { $null }
+if (-not $cfPath) {
+    Write-Host "  Installing cloudflared..." -ForegroundColor Yellow
+    winget install --id Cloudflare.cloudflared --silent --accept-package-agreements --accept-source-agreements | Out-Null
+    $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" +
+                [System.Environment]::GetEnvironmentVariable("PATH","User")
+    $cfCmd = Get-Command cloudflared -ErrorAction SilentlyContinue
+    $cfPath = if ($cfCmd) { $cfCmd.Source } else { $null }
+    if (-not $cfPath) { Write-Fail "cloudflared install failed. Manual install: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/" }
+}
+
+$AUTH_URL = "$CONFIG_URL/employee.json"
+cloudflared access login $AUTH_URL | Out-Null
+
+$cfToken = (cloudflared access token --app $AUTH_URL).ToString().Trim()
+if (-not $cfToken -or $cfToken -like "*error*") { Write-Fail "Could not get Cloudflare Access token" }
+
+$headers = @{ "cf-access-token" = $cfToken }
+
+$adminConfig = $null
+try {
+    $adminConfig = Invoke-RestMethod "$CONFIG_URL/admin.json" -Headers $headers -ErrorAction Stop
+    Write-OK "Role: admin (bitrix24 + bitrix24-admin)"
+} catch {}
+
+$empConfig = $null
+try {
+    $empConfig = Invoke-RestMethod "$CONFIG_URL/employee.json" -Headers $headers -ErrorAction Stop
+} catch {
+    Write-Fail "Access denied. Ask your admin to add your email."
+}
+Write-OK "Access granted"
+
+# --- 2. Dependencies -------------------------------------------------------------
+Write-Step 2 "Checking dependencies"
 
 $nodeCmd = Get-Command node -ErrorAction SilentlyContinue
 if (-not $nodeCmd) {
@@ -56,21 +94,6 @@ if (-not $gitCmd) {
 $gitVer = (git --version 2>&1).ToString().Replace("git version ","")
 Write-OK "Git $gitVer"
 
-# --- 2. cloudflared --------------------------------------------------------------
-Write-Step 2 "Checking cloudflared"
-$cfCmd = Get-Command cloudflared -ErrorAction SilentlyContinue
-$cfPath = if ($cfCmd) { $cfCmd.Source } else { $null }
-if (-not $cfPath) {
-    Write-Host "  Installing cloudflared..." -ForegroundColor Yellow
-    winget install --id Cloudflare.cloudflared --silent --accept-package-agreements --accept-source-agreements | Out-Null
-    $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" +
-                [System.Environment]::GetEnvironmentVariable("PATH","User")
-    $cfCmd = Get-Command cloudflared -ErrorAction SilentlyContinue
-    $cfPath = if ($cfCmd) { $cfCmd.Source } else { $null }
-    if (-not $cfPath) { Write-Fail "cloudflared install failed. Manual install: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/" }
-}
-Write-OK "cloudflared found"
-
 # --- 3. Download and install MCP server ------------------------------------------
 Write-Step 3 "Installing MCP server"
 $zip = "$env:TEMP\bitrix24-mcp.zip"
@@ -94,30 +117,10 @@ npm install --omit=dev --silent 2>&1 | Out-Null
 Pop-Location
 Write-OK "Installed to $INSTALL_DIR"
 
-# --- 4. Auth and fetch tokens ----------------------------------------------------
-Write-Step 4 "Login (browser will open)"
-Write-Host "  Sign in with your work email to get access." -ForegroundColor Cyan
-$AUTH_URL = "$CONFIG_URL/employee.json"
-cloudflared access login $AUTH_URL | Out-Null
-
-$cfToken = (cloudflared access token --app $AUTH_URL).ToString().Trim()
-if (-not $cfToken -or $cfToken -like "*error*") { Write-Fail "Could not get Cloudflare Access token" }
-
-$headers = @{ "cf-access-token" = $cfToken }
-
-$adminConfig = $null
-try {
-    $adminConfig = Invoke-RestMethod "$CONFIG_URL/admin.json" -Headers $headers -ErrorAction Stop
-    Write-OK "Role: admin (bitrix24 + bitrix24-admin)"
-} catch {}
-
-$empConfig = Invoke-RestMethod "$CONFIG_URL/employee.json" -Headers $headers
-Write-OK "Config received"
-
-# --- 5. Patch .claude.json -------------------------------------------------------
-Write-Step 5 "Configuring Claude Code"
+# --- 4. Patch .claude.json -------------------------------------------------------
+Write-Step 4 "Configuring Claude Code"
 $claudeFile = "$env:USERPROFILE\.claude.json"
-if (-not (Test-Path $claudeFile)) { Write-Fail ".claude.json not found — is Claude Code installed?" }
+if (-not (Test-Path $claudeFile)) { Write-Fail ".claude.json not found - is Claude Code installed?" }
 
 $claude = Get-Content $claudeFile -Raw | ConvertFrom-Json
 
@@ -142,8 +145,8 @@ if ($adminConfig) {
 $claude | Add-Member -NotePropertyName "mcpServers" -NotePropertyValue $mcp -Force
 $claude | ConvertTo-Json -Depth 10 | Set-Content $claudeFile -Encoding UTF8
 
-# --- 6. Configure permissions and org context ------------------------------------
-Write-Step 6 "Configuring permissions and org context"
+# --- 5. Configure permissions and org context ------------------------------------
+Write-Step 5 "Configuring permissions and org context"
 
 $settingsFile = "$env:USERPROFILE\.claude\settings.json"
 if (Test-Path $settingsFile) {
@@ -168,12 +171,12 @@ if (Test-Path $settingsFile) {
     $settings | Add-Member -NotePropertyName "permissions" -NotePropertyValue $permissions -Force
 
     $plugins = New-Object PSCustomObject
-    $plugins | Add-Member -NotePropertyName "superpowers@claude-plugins-official"       -NotePropertyValue $true
-    $plugins | Add-Member -NotePropertyName "frontend-design@claude-plugins-official"   -NotePropertyValue $true
-    $plugins | Add-Member -NotePropertyName "context7@claude-plugins-official"          -NotePropertyValue $true
+    $plugins | Add-Member -NotePropertyName "superpowers@claude-plugins-official"          -NotePropertyValue $true
+    $plugins | Add-Member -NotePropertyName "frontend-design@claude-plugins-official"      -NotePropertyValue $true
+    $plugins | Add-Member -NotePropertyName "context7@claude-plugins-official"             -NotePropertyValue $true
     $plugins | Add-Member -NotePropertyName "claude-md-management@claude-plugins-official" -NotePropertyValue $true
-    $plugins | Add-Member -NotePropertyName "session-report@claude-plugins-official"    -NotePropertyValue $true
-    $plugins | Add-Member -NotePropertyName "security-guidance@claude-plugins-official" -NotePropertyValue $true
+    $plugins | Add-Member -NotePropertyName "session-report@claude-plugins-official"       -NotePropertyValue $true
+    $plugins | Add-Member -NotePropertyName "security-guidance@claude-plugins-official"    -NotePropertyValue $true
     $settings | Add-Member -NotePropertyName "enabledPlugins" -NotePropertyValue $plugins -Force
 
     $marketplace = [PSCustomObject]@{
