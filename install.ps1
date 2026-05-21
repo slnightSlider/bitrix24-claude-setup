@@ -15,14 +15,15 @@ function Write-Fail($text)     { Write-Host "  ERR: $text" -ForegroundColor Red;
 # --- Splash ----------------------------------------------------------------------
 Clear-Host
 Write-Host ""
-Write-Host "        _  _____         _      " -ForegroundColor Cyan
-Write-Host "       (_)|_   _|___  __| |__   " -ForegroundColor Cyan
-Write-Host "       | |  | |/ _ \/ _| '_ \  " -ForegroundColor Cyan
-Write-Host "       | |  | |  __/ (_| | | | " -ForegroundColor Cyan
-Write-Host "       |_|  |_|\___|\__|_| |_| " -ForegroundColor Cyan
+Write-Host "  ██╗████████╗███████╗ ██████╗██╗  ██╗" -ForegroundColor Cyan
+Write-Host "  ██║╚══██╔══╝██╔════╝██╔════╝██║  ██║" -ForegroundColor Cyan
+Write-Host "  ██║   ██║   █████╗  ██║     ███████║" -ForegroundColor Cyan
+Write-Host "  ██║   ██║   ██╔══╝  ██║     ██╔══██║" -ForegroundColor Cyan
+Write-Host "  ██║   ██║   ███████╗╚██████╗██║  ██║" -ForegroundColor Cyan
+Write-Host "  ╚═╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "    Bitrix24 x Claude Code  //  MCP Setup" -ForegroundColor White
-Write-Host "    ______________________________________" -ForegroundColor DarkGray
+Write-Host "  Bitrix24  x  Claude Code  //  MCP Setup" -ForegroundColor White
+Write-Host "  ─────────────────────────────────────────" -ForegroundColor DarkGray
 Write-Host ""
 
 $init = @(
@@ -31,9 +32,9 @@ $init = @(
     "Checking system"
 )
 foreach ($msg in $init) {
-    Write-Host "    [ ] $msg" -NoNewline -ForegroundColor DarkGray
+    Write-Host "  [ ] $msg" -NoNewline -ForegroundColor DarkGray
     Start-Sleep -Milliseconds 350
-    Write-Host "`r    [+] $msg" -ForegroundColor DarkGreen
+    Write-Host "`r  [+] $msg" -ForegroundColor DarkGreen
 }
 Write-Host ""
 
