@@ -39,6 +39,14 @@ major=$(echo "$node_ver" | cut -d. -f1)
 [ "$major" -ge 18 ] || fail "Node.js $node_ver is too old, need 18+. Install: https://nodejs.org"
 ok "Node.js v$node_ver"
 
+if ! command -v python3 &>/dev/null; then
+    echo "  Installing Python..."
+    ensure_brew
+    brew install python --quiet
+    command -v python3 &>/dev/null || fail "Python install failed. Manual install: https://python.org"
+fi
+ok "Python $(python3 --version | sed 's/Python //')"
+
 if ! command -v git &>/dev/null; then
     echo "  Installing Git..."
     ensure_brew
