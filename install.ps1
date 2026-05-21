@@ -28,13 +28,15 @@ try {
 
 # ─── 2. cloudflared ───────────────────────────────────────────────────────────
 Write-Step 2 "Проверка cloudflared"
-$cfPath = (Get-Command cloudflared -ErrorAction SilentlyContinue)?.Source
+$cfCmd = Get-Command cloudflared -ErrorAction SilentlyContinue
+$cfPath = if ($cfCmd) { $cfCmd.Source } else { $null }
 if (-not $cfPath) {
     Write-Host "  Устанавливаю cloudflared..." -ForegroundColor Yellow
     winget install --id Cloudflare.cloudflared --silent --accept-package-agreements --accept-source-agreements | Out-Null
     $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" +
                 [System.Environment]::GetEnvironmentVariable("PATH","User")
-    $cfPath = (Get-Command cloudflared -ErrorAction SilentlyContinue)?.Source
+    $cfCmd = Get-Command cloudflared -ErrorAction SilentlyContinue
+    $cfPath = if ($cfCmd) { $cfCmd.Source } else { $null }
     if (-not $cfPath) { Write-Fail "cloudflared не установился. Установи вручную: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/" }
 }
 Write-OK "cloudflared найден"
