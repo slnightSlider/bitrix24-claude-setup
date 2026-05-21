@@ -185,22 +185,22 @@ MCP servers: bitrix24 (employee), bitrix24-admin (extended access)
 
 | ID | Name | Role |
 |----|------|------|
-| 1 | Chyngyz Usenov | — |
-| 15 | Albina Aidakeeva | — |
-| 17 | Japar Usenov | — |
+| 1 | Chyngyz Usenov | - |
+| 15 | Albina Aidakeeva | - |
+| 17 | Japar Usenov | - |
 | 27 | Beksultan Rakhmanov | Project Manager |
 | 29 | Dastan Almazbekov | Project Manager |
 | 35 | Nurdoolot Ermekbaev | Sales Manager |
 | 45 | Nursultan Usupbaev | Logistics / Warehouse |
 | 265 | Elmarbek Sadibakasov | Sales Manager |
-| 273 | Ruslan Ibraimov | — |
-| 281 | Viktor Artamonov | — |
+| 273 | Ruslan Ibraimov | - |
+| 281 | Viktor Artamonov | - |
 | 659 | Bayel Mars uulu | Design / DevOps / IT |
-| 661 | Renat Isaev | — |
-| 663 | Evgeniya Sagaydak | — |
-| 665 | Kubanychbek Abdulkhakim uulu | — |
+| 661 | Renat Isaev | - |
+| 663 | Evgeniya Sagaydak | - |
+| 665 | Kubanychbek Abdulkhakim uulu | - |
 | 667 | Guliza Teshebaeva | Office Manager |
-| 669 | Azamat Imanturov | — |
+| 669 | Azamat Imanturov | - |
 
 ## Task statuses
 
