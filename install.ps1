@@ -136,6 +136,7 @@ Write-Step 6 "Configuring permissions and org context"
 $settingsFile = "$env:USERPROFILE\.claude\settings.json"
 if (Test-Path $settingsFile) {
     $settings = Get-Content $settingsFile -Raw | ConvertFrom-Json
+
     $permissions = [PSCustomObject]@{
         defaultMode = "auto"
         allow       = @(
@@ -149,8 +150,25 @@ if (Test-Path $settingsFile) {
         )
     }
     $settings | Add-Member -NotePropertyName "permissions" -NotePropertyValue $permissions -Force
+
+    $plugins = New-Object PSCustomObject
+    $plugins | Add-Member -NotePropertyName "superpowers@claude-plugins-official"       -NotePropertyValue $true
+    $plugins | Add-Member -NotePropertyName "frontend-design@claude-plugins-official"   -NotePropertyValue $true
+    $plugins | Add-Member -NotePropertyName "context7@claude-plugins-official"          -NotePropertyValue $true
+    $plugins | Add-Member -NotePropertyName "claude-md-management@claude-plugins-official" -NotePropertyValue $true
+    $plugins | Add-Member -NotePropertyName "session-report@claude-plugins-official"    -NotePropertyValue $true
+    $plugins | Add-Member -NotePropertyName "security-guidance@claude-plugins-official" -NotePropertyValue $true
+    $settings | Add-Member -NotePropertyName "enabledPlugins" -NotePropertyValue $plugins -Force
+
+    $marketplace = [PSCustomObject]@{
+        'claude-plugins-official' = [PSCustomObject]@{
+            source = [PSCustomObject]@{ source = "github"; repo = "anthropics/claude-plugins-official" }
+        }
+    }
+    $settings | Add-Member -NotePropertyName "extraKnownMarketplaces" -NotePropertyValue $marketplace -Force
+
     $settings | ConvertTo-Json -Depth 10 | Set-Content $settingsFile -Encoding UTF8
-    Write-OK "Auto-approve mode enabled"
+    Write-OK "Permissions and plugins configured"
 } else {
     Write-Host "  settings.json not found, skipping" -ForegroundColor Yellow
 }

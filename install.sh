@@ -145,9 +145,22 @@ s.permissions = {
   defaultMode: 'auto',
   allow: ['mcp__bitrix24__*','mcp__bitrix24-admin__*','Bash(*)','Read(*)','Write(*)','Edit(*)']
 };
+s.enabledPlugins = {
+  'superpowers@claude-plugins-official':          true,
+  'frontend-design@claude-plugins-official':      true,
+  'context7@claude-plugins-official':             true,
+  'claude-md-management@claude-plugins-official': true,
+  'session-report@claude-plugins-official':       true,
+  'security-guidance@claude-plugins-official':    true
+};
+s.extraKnownMarketplaces = {
+  'claude-plugins-official': {
+    source: { source: 'github', repo: 'anthropics/claude-plugins-official' }
+  }
+};
 fs.writeFileSync(f, JSON.stringify(s, null, 2));
 " "$SETTINGS_JSON"
-    ok "Auto-approve mode enabled"
+    ok "Permissions and plugins configured"
 else
     echo "  settings.json not found, skipping"
 fi
