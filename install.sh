@@ -47,13 +47,15 @@ if ! command -v python3 &>/dev/null; then
 fi
 ok "Python $(python3 --version | sed 's/Python //')"
 
-if ! command -v git &>/dev/null; then
+git_ver=$(git --version 2>/dev/null | sed 's/git version //')
+if [ -z "$git_ver" ] || echo "$git_ver" | grep -q "^[Xx]code\|stub\|xcrun"; then
     echo "  Installing Git..."
     ensure_brew
     brew install git --quiet
-    command -v git &>/dev/null || fail "Git install failed. Manual install: https://git-scm.com"
+    git_ver=$(git --version 2>/dev/null | sed 's/git version //')
+    [ -n "$git_ver" ] || fail "Git install failed. Manual install: https://git-scm.com"
 fi
-ok "Git $(git --version | sed 's/git version //')"
+ok "Git $git_ver"
 
 # --- 2. cloudflared --------------------------------------------------------------
 step 2 "Checking cloudflared"
