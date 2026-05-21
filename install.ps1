@@ -13,16 +13,14 @@ function Write-OK($text)       { Write-Host "  OK: $text" -ForegroundColor Green
 function Write-Fail($text)     { Write-Host "  ERR: $text" -ForegroundColor Red; exit 1 }
 
 # --- Splash ----------------------------------------------------------------------
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-$OutputEncoding = [System.Text.Encoding]::UTF8
 Clear-Host
 Write-Host ""
-Write-Host '  ██╗████████╗███████╗ ██████╗██╗  ██╗   ██╗  ██╗ ██████╗ ' -ForegroundColor Green
-Write-Host '  ██║╚══██╔══╝██╔════╝██╔════╝██║  ██║   ██║ ██╔╝██╔════╝ ' -ForegroundColor Green
-Write-Host '  ██║   ██║   █████╗  ██║     ███████║   █████╔╝ ██║  ███╗' -ForegroundColor Green
-Write-Host '  ██║   ██║   ██╔══╝  ██║     ██╔══██║   ██╔═██╗ ██║   ██║' -ForegroundColor Green
-Write-Host '  ██║   ██║   ███████╗╚██████╗██║  ██║██╗██║  ██╗╚██████╔╝' -ForegroundColor Green
-Write-Host '  ╚═╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═╝ ╚═════╝' -ForegroundColor Green
+Write-Host ' _____ _____ _____ _____  _   _   _   _______ ' -ForegroundColor Green
+Write-Host '|_   _|_   _|  ___/  __ \| | | | | | / /  __ \' -ForegroundColor Green
+Write-Host '  | |   | | | |__ | /  \/| |_| | | |/ /| |  \/' -ForegroundColor Green
+Write-Host '  | |   | | |  __|| |    |  _  | |    \| | __ ' -ForegroundColor Green
+Write-Host ' _| |_  | | | |___| \__/\| | | |_| |\  \ |_\ \' -ForegroundColor Green
+Write-Host ' \___/  \_/ \____/ \____/\_| |_(_)_| \_/\____/' -ForegroundColor Green
 Write-Host ""
 Write-Host "  Bitrix24  x  Claude Code  //  MCP Setup" -ForegroundColor White
 Write-Host "  ----------------------------------------------------------" -ForegroundColor DarkGray
