@@ -1,10 +1,10 @@
 # Bitrix24 MCP Setup for Claude Code
-# Usage: irm https://raw.githubusercontent.com/slnightSlider/bitrix24-claude-setup/main/install.ps1 | iex
+# Usage: irm https://raw.githubusercontent.com/slnightSlider/bitrix24-claude-setup/master/install.ps1 | iex
 
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-$REPO_ZIP = "https://github.com/slnightSlider/bitrix24-claude-setup/archive/refs/heads/main.zip"
+$REPO_ZIP = "https://github.com/slnightSlider/bitrix24-claude-setup/archive/refs/heads/master.zip"
 $INSTALL_DIR = "C:\bitrix24-mcp-server"
 $CONFIG_URL = "https://config.rsqt.com.kg"
 
