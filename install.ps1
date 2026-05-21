@@ -15,15 +15,18 @@ function Write-Fail($text)     { Write-Host "  ERR: $text" -ForegroundColor Red;
 # --- Splash ----------------------------------------------------------------------
 Clear-Host
 Write-Host ""
-Write-Host "  ██╗████████╗███████╗ ██████╗██╗  ██╗" -ForegroundColor Cyan
-Write-Host "  ██║╚══██╔══╝██╔════╝██╔════╝██║  ██║" -ForegroundColor Cyan
-Write-Host "  ██║   ██║   █████╗  ██║     ███████║" -ForegroundColor Cyan
-Write-Host "  ██║   ██║   ██╔══╝  ██║     ██╔══██║" -ForegroundColor Cyan
-Write-Host "  ██║   ██║   ███████╗╚██████╗██║  ██║" -ForegroundColor Cyan
-Write-Host "  ╚═╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝" -ForegroundColor Cyan
+Write-Host ' ______  ________  ________   ______   __    __      __    __   ______  ' -ForegroundColor Cyan
+Write-Host '/      |/        |/        | /      \ /  |  /  |    /  |  /  | /      \ ' -ForegroundColor Cyan
+Write-Host '$$$$$$/ $$$$$$$$/ $$$$$$$$/ /$$$$$$  |$$ |  $$ |    $$ | /$$/ /$$$$$$  |' -ForegroundColor Cyan
+Write-Host '  $$ |     $$ |   $$ |__    $$ |  $$/ $$ |__$$ |    $$ |/$$/  $$ | _$$/ ' -ForegroundColor Cyan
+Write-Host '  $$ |     $$ |   $$    |   $$ |      $$    $$ |    $$  $$<   $$ |/    |' -ForegroundColor Cyan
+Write-Host '  $$ |     $$ |   $$$$$/    $$ |   __ $$$$$$$$ |    $$$$$  \  $$ |$$$$ |' -ForegroundColor Cyan
+Write-Host ' _$$ |_    $$ |   $$ |_____ $$ \__/  |$$ |  $$ | __ $$ |$$  \ $$ \__$$ |' -ForegroundColor Cyan
+Write-Host '/ $$   |   $$ |   $$       |$$    $$/ $$ |  $$ |/  |$$ | $$  |$$    $$/ ' -ForegroundColor Cyan
+Write-Host '$$$$$$/    $$/    $$$$$$$$/  $$$$$$/  $$/   $$/ $$/ $$/   $$/  $$$$$$/  ' -ForegroundColor Cyan
 Write-Host ""
 Write-Host "  Bitrix24  x  Claude Code  //  MCP Setup" -ForegroundColor White
-Write-Host "  ─────────────────────────────────────────" -ForegroundColor DarkGray
+Write-Host "  ─────────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
 Write-Host ""
 
 $init = @(
