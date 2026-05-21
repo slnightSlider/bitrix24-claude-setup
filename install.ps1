@@ -67,9 +67,10 @@ Write-OK "Установлено в $INSTALL_DIR"
 # ─── 4. Авторизация и получение токенов ──────────────────────────────────────
 Write-Step 4 "Авторизация (откроется браузер)"
 Write-Host "  Войди через свой email — это даст доступ к конфигу." -ForegroundColor Cyan
-cloudflared access login $CONFIG_URL 2>&1 | Out-Null
+$AUTH_URL = "$CONFIG_URL/employee.json"
+cloudflared access login $AUTH_URL | Out-Null
 
-$cfToken = (cloudflared access token --app $CONFIG_URL 2>&1).ToString().Trim()
+$cfToken = (cloudflared access token --app $AUTH_URL).ToString().Trim()
 if (-not $cfToken -or $cfToken -like "*error*") { Write-Fail "Не удалось получить токен Cloudflare Access" }
 
 $headers = @{ "cf-access-token" = $cfToken }
