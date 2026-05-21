@@ -127,7 +127,7 @@ if ($adminConfig) {
     })
 }
 
-$claude.mcpServers = $mcp
+$claude | Add-Member -NotePropertyName "mcpServers" -NotePropertyValue $mcp -Force
 $claude | ConvertTo-Json -Depth 10 | Set-Content $claudeFile -Encoding UTF8
 
 # --- 6. Configure permissions and org context ------------------------------------
