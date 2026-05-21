@@ -12,7 +12,30 @@ function Write-Step($n, $text) { Write-Host "`n[$n/5] $text" -ForegroundColor Ye
 function Write-OK($text)       { Write-Host "  OK: $text" -ForegroundColor Green }
 function Write-Fail($text)     { Write-Host "  ERR: $text" -ForegroundColor Red; exit 1 }
 
-Write-Host "`n=== Bitrix24 MCP setup for Claude Code ===" -ForegroundColor Cyan
+# --- Splash ----------------------------------------------------------------------
+Clear-Host
+Write-Host ""
+Write-Host "        _  _____         _      " -ForegroundColor Cyan
+Write-Host "       (_)|_   _|___  __| |__   " -ForegroundColor Cyan
+Write-Host "       | |  | |/ _ \/ _| '_ \  " -ForegroundColor Cyan
+Write-Host "       | |  | |  __/ (_| | | | " -ForegroundColor Cyan
+Write-Host "       |_|  |_|\___|\__|_| |_| " -ForegroundColor Cyan
+Write-Host ""
+Write-Host "    Bitrix24 x Claude Code  //  MCP Setup" -ForegroundColor White
+Write-Host "    ______________________________________" -ForegroundColor DarkGray
+Write-Host ""
+
+$init = @(
+    "Initializing environment",
+    "Loading configuration",
+    "Checking system"
+)
+foreach ($msg in $init) {
+    Write-Host "    [ ] $msg" -NoNewline -ForegroundColor DarkGray
+    Start-Sleep -Milliseconds 350
+    Write-Host "`r    [+] $msg" -ForegroundColor DarkGreen
+}
+Write-Host ""
 
 # --- 1. Auth ---------------------------------------------------------------------
 Write-Step 1 "Login (browser will open)"
