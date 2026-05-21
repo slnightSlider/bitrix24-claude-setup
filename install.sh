@@ -165,8 +165,8 @@ else
     echo "  settings.json not found, skipping"
 fi
 
-mkdir -p "$HOME/.claude"
-cat > "$HOME/.claude/CLAUDE.md" << 'HEREDOC'
+mkdir -p "$HOME/bitrix24"
+cat > "$HOME/bitrix24/CLAUDE.md" << 'HEREDOC'
 # Bitrix24 — kontekst iTech
 
 Portal: itechkg.bitrix24.kz
@@ -290,7 +290,17 @@ MCP servers: bitrix24 (employee), bitrix24-admin (extended access)
 | C15:WON | Deal won |
 | C15:LOSE | Deal lost |
 HEREDOC
-ok "~/.claude/CLAUDE.md created (global org context)"
+ok "$HOME/bitrix24/CLAUDE.md created"
+
+GLOBAL_CLAUDE="$HOME/.claude/CLAUDE.md"
+POINTER=$'\n## Bitrix24\nIf the task involves Bitrix24 (tasks, deals, CRM, users), read ~/bitrix24/CLAUDE.md for org context.\n'
+if [ -f "$GLOBAL_CLAUDE" ]; then
+    grep -q "bitrix24/CLAUDE" "$GLOBAL_CLAUDE" || printf "%s" "$POINTER" >> "$GLOBAL_CLAUDE"
+else
+    mkdir -p "$HOME/.claude"
+    printf "%s" "$POINTER" > "$GLOBAL_CLAUDE"
+fi
+ok "~/.claude/CLAUDE.md updated (Bitrix24 pointer)"
 
 echo
 echo "=== Done! ==="

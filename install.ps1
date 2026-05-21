@@ -173,7 +173,7 @@ if (Test-Path $settingsFile) {
     Write-Host "  settings.json not found, skipping" -ForegroundColor Yellow
 }
 
-$bitrix24Dir = "$env:USERPROFILE\.claude"
+$bitrix24Dir = "C:\bitrix24"
 if (-not (Test-Path $bitrix24Dir)) { New-Item -ItemType Directory -Force $bitrix24Dir | Out-Null }
 @'
 # Bitrix24 — kontekst iTech
@@ -299,7 +299,18 @@ MCP servers: bitrix24 (employee), bitrix24-admin (extended access)
 | C15:WON | Deal won |
 | C15:LOSE | Deal lost |
 '@ | Set-Content "$bitrix24Dir\CLAUDE.md" -Encoding UTF8
-Write-OK "~\.claude\CLAUDE.md created (global org context)"
+Write-OK "C:\bitrix24\CLAUDE.md created"
+
+$globalClaude = "$env:USERPROFILE\.claude\CLAUDE.md"
+$pointer = "`n## Bitrix24`nIf the task involves Bitrix24 (tasks, deals, CRM, users), read C:\bitrix24\CLAUDE.md for org context.`n"
+if (Test-Path $globalClaude) {
+    if (-not (Select-String -Path $globalClaude -Pattern "C:\\bitrix24\\CLAUDE" -Quiet)) {
+        Add-Content $globalClaude $pointer -Encoding UTF8
+    }
+} else {
+    Set-Content $globalClaude $pointer -Encoding UTF8
+}
+Write-OK "~\.claude\CLAUDE.md updated (Bitrix24 pointer)"
 
 Write-Host "`n=== Done! ===" -ForegroundColor Cyan
 Write-Host "  Run claude from C:\bitrix24 to load org context automatically." -ForegroundColor Cyan
