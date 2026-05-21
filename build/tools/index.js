@@ -912,6 +912,17 @@ export const updateTaskTool = {
         required: ['id']
     }
 };
+export const deleteTaskTool = {
+    name: 'bitrix24_delete_task',
+    description: 'Delete a task by ID',
+    inputSchema: {
+        type: 'object',
+        properties: {
+            id: { type: 'string', description: 'Task ID to delete' }
+        },
+        required: ['id']
+    }
+};
 export const findUserTool = {
     name: 'bitrix24_find_user',
     description: 'Find Bitrix24 users by name to get their ID for task assignment',
@@ -983,6 +994,7 @@ export const allTools = [
     getTaskTool,
     listTasksTool,
     updateTaskTool,
+    deleteTaskTool,
     findUserTool
 ];
 // Tool execution handlers
@@ -1449,6 +1461,10 @@ export async function executeToolCall(name, args) {
                 if (args.status !== undefined) filter.STATUS = args.status;
                 const tasks = await bitrix24Client.listTasks(filter, {}, args.limit || 20);
                 return { success: true, tasks, count: tasks.length };
+            }
+            case 'bitrix24_delete_task': {
+                await bitrix24Client.deleteTask(args.id);
+                return { success: true, message: `Task ${args.id} deleted` };
             }
             case 'bitrix24_update_task': {
                 const fields = {};

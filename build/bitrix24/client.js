@@ -1116,6 +1116,10 @@ export class Bitrix24Client {
         const result = await this.makeRequest('tasks.task.update', { taskId: id, fields });
         return result;
     }
+    async deleteTask(id) {
+        const result = await this.makeRequest('tasks.task.delete', { taskId: id });
+        return result;
+    }
     async findUsers(name) {
         const result = await this.makeRequest('user.search', { NAME: name });
         const byFirst = Array.isArray(result) ? result : [];
