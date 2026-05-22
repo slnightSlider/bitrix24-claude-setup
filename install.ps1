@@ -64,7 +64,7 @@ if (-not $cfPath) {
 }
 
 $AUTH_URL = "$CONFIG_URL/employee.json"
-cloudflared access login $AUTH_URL | Out-Null
+cloudflared access login $AUTH_URL
 
 $cfToken = (cloudflared access token --app $AUTH_URL).ToString().Trim()
 if (-not $cfToken -or $cfToken -like "*error*") { Write-Fail "Could not get Cloudflare Access token" }
@@ -151,7 +151,8 @@ Remove-Item $tmp -Recurse -Force
 
 Write-Host "  npm install..." -ForegroundColor Yellow
 Push-Location $INSTALL_DIR
-npm install --omit=dev --silent 2>&1 | Out-Null
+cmd /c "npm install --omit=dev --silent"
+if ($LASTEXITCODE -ne 0) { Pop-Location; Write-Fail "npm install failed" }
 Pop-Location
 Write-OK "Installed to $INSTALL_DIR"
 
@@ -181,7 +182,8 @@ if ($adminConfig) {
 }
 
 $claude | Add-Member -NotePropertyName "mcpServers" -NotePropertyValue $mcp -Force
-$claude | ConvertTo-Json -Depth 10 | Set-Content $claudeFile -Encoding UTF8
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
+[System.IO.File]::WriteAllText($claudeFile, ($claude | ConvertTo-Json -Depth 10), $utf8NoBom)
 
 # --- 5. Configure permissions and org context ------------------------------------
 Write-Step 5 "Configuring permissions and org context"
@@ -224,7 +226,7 @@ if (Test-Path $settingsFile) {
     }
     $settings | Add-Member -NotePropertyName "extraKnownMarketplaces" -NotePropertyValue $marketplace -Force
 
-    $settings | ConvertTo-Json -Depth 10 | Set-Content $settingsFile -Encoding UTF8
+    [System.IO.File]::WriteAllText($settingsFile, ($settings | ConvertTo-Json -Depth 10), $utf8NoBom)
     Write-OK "Permissions and plugins configured"
 } else {
     Write-Host "  settings.json not found, skipping" -ForegroundColor Yellow
