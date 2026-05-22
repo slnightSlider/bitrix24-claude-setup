@@ -141,7 +141,14 @@ if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }
 Expand-Archive $zip -DestinationPath $tmp
 Remove-Item $zip
 
-if (Test-Path $INSTALL_DIR) { Remove-Item $INSTALL_DIR -Recurse -Force }
+if (Test-Path $INSTALL_DIR) {
+    Get-Process node -ErrorAction SilentlyContinue |
+        Where-Object { $_.Path -like "*bitrix24*" -or $_.MainModule.FileName -like "*bitrix24*" } |
+        Stop-Process -Force -ErrorAction SilentlyContinue
+    Start-Sleep -Milliseconds 800
+    Remove-Item $INSTALL_DIR -Recurse -Force -ErrorAction SilentlyContinue
+    if (Test-Path $INSTALL_DIR) { Write-Fail "Cannot remove $INSTALL_DIR - close Claude Code and retry" }
+}
 New-Item -ItemType Directory -Force $INSTALL_DIR | Out-Null
 $extracted = Get-ChildItem $tmp | Select-Object -First 1
 Copy-Item "$($extracted.FullName)\build"             "$INSTALL_DIR\build"             -Recurse
