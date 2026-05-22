@@ -102,6 +102,22 @@ $major = [int]($ver.Split('.')[0])
 if ($major -lt 18) { Write-Fail "Node.js $ver is too old, need 18+. Download: https://nodejs.org" }
 Write-OK "Node.js v$ver"
 
+$pyCmd = Get-Command python -ErrorAction SilentlyContinue
+$pyReal = $pyCmd -and $pyCmd.Source -notlike "*WindowsApps*"
+if (-not $pyReal) {
+    Write-Host "  Installing Python 3.13..." -ForegroundColor Yellow
+    winget install --id Python.Python.3.13 -e --silent --accept-package-agreements --accept-source-agreements | Out-Null
+    $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" +
+                [System.Environment]::GetEnvironmentVariable("PATH","User")
+    $pyCmd = Get-Command python -ErrorAction SilentlyContinue
+    $pyReal = $pyCmd -and $pyCmd.Source -notlike "*WindowsApps*"
+}
+if ($pyReal) {
+    $pyVer = (& python --version 2>&1).ToString().Replace("Python ","").Trim()
+    Write-OK "Python $pyVer"
+} else {
+    Write-Host "  Python not installed, skipping (optional)" -ForegroundColor DarkGray
+}
 
 $gitCmd = Get-Command git -ErrorAction SilentlyContinue
 if (-not $gitCmd) {
