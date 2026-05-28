@@ -461,7 +461,16 @@ bitrix24_validate_webhook — test webhook connectivity
 Write-OK "C:\bitrix24\CLAUDE.md created"
 
 $globalClaude = "$env:USERPROFILE\.claude\CLAUDE.md"
-$pointer = "`n## Bitrix24`nIf the task involves Bitrix24 (tasks, deals, CRM, users), read C:\bitrix24\CLAUDE.md for org context.`n"
+$pointer = @"
+
+## Bitrix24
+If the task involves Bitrix24 (tasks, deals, CRM, users, reports):
+- Read C:\bitrix24\CLAUDE.md for org context, users, pipelines and available MCP tools
+- Use MCP tools directly — do NOT ask for permission, do NOT ask "shall I proceed?"
+- All manuals, context files and org docs are in C:\bitrix24\
+- Run claude from C:\bitrix24\ to load org context automatically
+
+"@
 if (Test-Path $globalClaude) {
     if (-not (Select-String -Path $globalClaude -Pattern "C:\\bitrix24\\CLAUDE" -Quiet)) {
         Add-Content $globalClaude $pointer -Encoding UTF8
