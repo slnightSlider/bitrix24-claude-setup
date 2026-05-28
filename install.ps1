@@ -242,18 +242,103 @@ if (Test-Path $settingsFile) {
 $bitrix24Dir = "C:\bitrix24"
 if (-not (Test-Path $bitrix24Dir)) { New-Item -ItemType Directory -Force $bitrix24Dir | Out-Null }
 @'
-# Bitrix24 — org context iTech
-
-## Behavior rules
-- For ANY Bitrix24 task: use MCP tools directly, do not ask for confirmation between steps.
-- Do not ask "shall I continue?" or "may I proceed?" — just do it.
-- If user ID is unknown, call bitrix24_find_user first, then proceed immediately.
-- Keep responses short — show result, not the process.
-
-# Bitrix24 — kontekst iTech
+# Bitrix24 — iTech org context
 
 Portal: itechkg.bitrix24.kz
-MCP servers: bitrix24 (employee), bitrix24-admin (extended access)
+
+## Behavior rules
+- Use MCP tools directly — no confirmation between steps, no "shall I proceed?"
+- Unknown user? Call bitrix24_find_user first, then continue immediately
+- Short responses: show result, not the process
+- If unsure what data exists — query it (bitrix24_list_*, bitrix24_get_*), don't guess
+- Chain tool calls in one turn when possible
+
+## MCP servers and access levels
+
+### bitrix24 (employee webhook)
+Scope: Tasks, CRM (read), Users
+- Read/create/update/delete own tasks and tasks where responsible
+- Read deals, contacts, companies, leads
+- Find users by name or email
+
+### bitrix24-admin (admin webhook)
+Scope: Full access
+- Everything above plus:
+- Create/update/delete any CRM entity (deals, contacts, companies, leads)
+- Full user management
+- Reports, analytics, sales forecasts
+- Business processes, activity monitoring
+
+## Available MCP tools
+
+### Tasks
+bitrix24_create_task — create task (title, description, responsible_id, deadline)
+bitrix24_get_task(id) — get task details
+bitrix24_update_task(id, fields) — update task fields
+bitrix24_delete_task(id) — delete task
+bitrix24_list_tasks(filter) — list tasks with filters
+
+### CRM — Deals
+bitrix24_create_deal / get_deal / update_deal / list_deals
+bitrix24_get_latest_deals — recent deals
+bitrix24_get_deals_from_date_range — deals by period
+bitrix24_get_deals_with_user_names — deals with resolved names
+bitrix24_filter_deals_by_status / by_pipeline / by_budget
+bitrix24_get_deal_stages — all stage IDs and names
+bitrix24_get_deal_pipelines — all pipeline IDs and names
+bitrix24_track_deal_progression — deal movement history
+
+### CRM — Contacts
+bitrix24_create_contact / get_contact / update_contact / list_contacts
+bitrix24_get_latest_contacts / get_contacts_with_user_names
+
+### CRM — Companies
+bitrix24_create_company / get_company / update_company / list_companies
+bitrix24_get_latest_companies / get_companies_with_user_names
+
+### CRM — Leads
+bitrix24_create_lead / get_lead / update_lead / list_leads
+bitrix24_get_latest_leads / get_leads_with_user_names / get_leads_from_date_range
+
+### Users
+bitrix24_find_user(name_or_email) — find user by name or email
+bitrix24_get_user(id) — get user details
+bitrix24_get_all_users — list all portal users
+bitrix24_resolve_user_names(ids) — batch resolve IDs to names
+
+### Analytics & Reports
+bitrix24_generate_sales_report — full sales report
+bitrix24_get_team_dashboard — team KPIs
+bitrix24_analyze_account_performance — account stats
+bitrix24_analyze_customer_engagement — engagement metrics
+bitrix24_compare_user_performance — compare managers
+bitrix24_forecast_performance — sales forecast
+bitrix24_get_user_performance_summary — single user summary
+bitrix24_monitor_sales_activities — recent sales activity
+bitrix24_monitor_user_activities — user activity log
+
+### Search & Diagnostics
+bitrix24_search_crm(query) — search across all CRM entities
+bitrix24_check_crm_settings — portal CRM configuration
+bitrix24_diagnose_permissions — check what current webhook can access
+bitrix24_validate_webhook — test webhook connectivity
+
+## Workflow patterns
+
+### Find and update
+1. bitrix24_find_user(name) -> get ID
+2. bitrix24_list_tasks(responsible_id) -> find task
+3. bitrix24_update_task(id, {status: 5}) -> done
+
+### Create deal with contact
+1. bitrix24_find_user(manager_name) -> responsible_id
+2. bitrix24_create_contact(name, phone) -> contact_id
+3. bitrix24_create_deal(title, contact_id, stage_id) -> deal_id
+
+### Explore what's possible
+- bitrix24_diagnose_permissions — see what this webhook can do
+- bitrix24_check_crm_settings — see portal config
+- bitrix24_get_deal_pipelines + get_deal_stages — see all stages
 
 ## Users
 
